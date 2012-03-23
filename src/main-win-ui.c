@@ -214,10 +214,10 @@ static GtkRadioActionEntry main_win_sort_type_actions[]=
 
 static GtkRadioActionEntry main_win_sort_by_actions[]=
 {
-    {"ByName", NULL, N_("By _Name"), NULL, NULL, COL_FILE_NAME},
-    {"ByMTime", NULL, N_("By _Modification Time"), NULL, NULL, COL_FILE_MTIME},
-    {"BySize", NULL, N_("By _Size"), NULL, NULL, COL_FILE_SIZE},
-    {"ByType", NULL, N_("By File _Type"), NULL, NULL, COL_FILE_DESC}
+    {"ByName", NULL, N_("By _Name"), "<Ctrl>F1", NULL, COL_FILE_NAME},
+    {"ByMTime", NULL, N_("By _Modification Time"), "<Ctrl>F2", NULL, COL_FILE_MTIME},
+    {"BySize", NULL, N_("By _Size"), "<Ctrl>F3", NULL, COL_FILE_SIZE},
+    {"ByType", NULL, N_("By File _Type"), "<Ctrl>F4", NULL, COL_FILE_DESC}
 };
 
 static GtkRadioActionEntry main_win_side_bar_mode_actions[]=
