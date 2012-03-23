@@ -834,17 +834,24 @@ static void update_statusbar(FmMainWin* win)
     gtk_statusbar_pop(GTK_STATUSBAR(win->statusbar), win->statusbar_ctx);
     text = fm_tab_page_get_status_text(page, FM_STATUS_TEXT_NORMAL);
     if(text)
+    {
         gtk_statusbar_push(GTK_STATUSBAR(win->statusbar), win->statusbar_ctx, text);
+        gtk_widget_set_tooltip_text(GTK_WIDGET(win->statusbar), text);
+    }
 
     text = fm_tab_page_get_status_text(page, FM_STATUS_TEXT_SELECTED_FILES);
     if(text)
+    {
         gtk_statusbar_push(GTK_STATUSBAR(win->statusbar), win->statusbar_ctx2, text);
+        gtk_widget_set_tooltip_text(GTK_WIDGET(win->statusbar), text);
+    }
 
     text = fm_tab_page_get_status_text(page, FM_STATUS_TEXT_FS_INFO);
     if(text)
     {
         GtkLabel* label = GTK_LABEL(gtk_bin_get_child(GTK_BIN(win->vol_status)));
         gtk_label_set_text(label, text);
+        gtk_widget_set_tooltip_text(win->vol_status, text);
         gtk_widget_show(win->vol_status);
     }
     else
@@ -1109,11 +1116,13 @@ static void on_tab_page_status_text(FmTabPage* page, guint type, const char* sta
         gtk_statusbar_pop(GTK_STATUSBAR(win->statusbar), win->statusbar_ctx);
         if(status_text)
             gtk_statusbar_push(GTK_STATUSBAR(win->statusbar), win->statusbar_ctx, status_text);
+        gtk_widget_set_tooltip_text(GTK_WIDGET(win->statusbar), status_text);
         break;
     case FM_STATUS_TEXT_SELECTED_FILES:
         gtk_statusbar_pop(GTK_STATUSBAR(win->statusbar), win->statusbar_ctx2);
         if(status_text)
             gtk_statusbar_push(GTK_STATUSBAR(win->statusbar), win->statusbar_ctx2, status_text);
+        gtk_widget_set_tooltip_text(GTK_WIDGET(win->statusbar), status_text);
         break;
     case FM_STATUS_TEXT_FS_INFO:
         if(status_text)
@@ -1124,6 +1133,7 @@ static void on_tab_page_status_text(FmTabPage* page, guint type, const char* sta
         }
         else
             gtk_widget_hide(win->vol_status);
+        gtk_widget_set_tooltip_text(win->vol_status, status_text);
         break;
     }
 }
