@@ -1326,7 +1326,11 @@ gboolean on_button_press_event(GtkWidget* w, GdkEventButton* evt)
         act = gtk_ui_manager_get_action(win->ui, "/Next2");
         gtk_action_activate(act);
     }
-    return GTK_WIDGET_CLASS(fm_main_win_parent_class)->button_press_event(w, evt);
+
+    if (GTK_WIDGET_CLASS(fm_main_win_parent_class)->button_press_event)
+        return GTK_WIDGET_CLASS(fm_main_win_parent_class)->button_press_event(w, evt);
+    else
+        return TRUE;
 }
 
 static void on_reload(GtkAction* act, FmMainWin* win)
