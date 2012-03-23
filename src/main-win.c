@@ -102,6 +102,9 @@ static void on_notebook_page_removed(GtkNotebook* nb, GtkWidget* page, guint num
 
 static void on_folder_view_clicked(FmFolderView* fv, FmFolderViewClickType type, FmFileInfo* fi, FmMainWin* win);
 
+static void on_zoom_in(GtkAction* act, FmMainWin* win);
+static void on_zoom_out(GtkAction* act, FmMainWin* win);
+
 #include "main-win-ui.c" /* ui xml definitions and actions */
 
 static GSList* all_wins = NULL;
@@ -208,6 +211,8 @@ static void on_folder_view_sort_changed(FmFolderView* fv, FmMainWin* win)
 
 static gboolean on_view_key_press_event(FmFolderView* fv, GdkEventKey* evt, FmMainWin* win)
 {
+    int modifier = ( evt->state & ( GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK ) );
+
     switch(evt->keyval)
     {
     case GDK_BackSpace:
@@ -215,6 +220,18 @@ static gboolean on_view_key_press_event(FmFolderView* fv, GdkEventKey* evt, FmMa
         break;
     case GDK_Delete:
         on_del(NULL, win);
+        break;
+    case GDK_KP_Add:
+        if(modifier & GDK_CONTROL_MASK)
+        {
+            on_zoom_in(NULL, win);
+        }
+        break;
+    case GDK_KP_Subtract:
+        if(modifier & GDK_CONTROL_MASK)
+        {
+            on_zoom_out(NULL, win);
+        }
         break;
     case GDK_Menu:
         {
@@ -1352,5 +1369,67 @@ static void on_reload(GtkAction* act, FmMainWin* win)
 static void on_show_side_pane(GtkToggleAction* act, FmMainWin* win)
 {
     /* TODO: hide the side pane if the user wants to. */
+}
+
+
+static void zoom(FmMainWin* win, int delta)
+{
+    guint * val;
+    char * key_name;
+    guint max_value = 96;
+
+    FmFolderViewMode mode = fm_folder_view_get_mode(FM_FOLDER_VIEW(win->folder_view));
+    switch (mode)
+    {
+        case FM_FV_ICON_VIEW:
+            val = &fm_config->big_icon_size;
+            key_name = "big_icon_size";
+            break;
+        case FM_FV_LIST_VIEW:
+        case FM_FV_COMPACT_VIEW:
+            val = &fm_config->small_icon_size;
+            key_name = "small_icon_size";
+            break;
+        case FM_FV_THUMBNAIL_VIEW:
+            val = &fm_config->thumbnail_size;
+            key_name = "thumbnail_size";
+            max_value = 256;
+            break;
+        default:
+            return;
+    }
+
+    guint v = *val;
+
+    if (v > 32 || (v == 32 && delta > 0))
+        delta *= 2;
+    if (v > 64 || (v == 64 && delta > 0))
+        delta *= 2;
+
+    v += delta;
+
+    if (delta < 0)
+        delta = - delta;
+    v = v - (v % delta);
+
+    if (v > max_value)
+        v = max_value;
+    if (v < 16)
+        v = 16;
+
+    *val = v;
+
+    fm_config_emit_changed(fm_config, key_name);
+}
+
+
+static void on_zoom_in(GtkAction* act, FmMainWin* win)
+{
+    zoom(win, 4);
+}
+
+static void on_zoom_out(GtkAction* act, FmMainWin* win)
+{
+    zoom(win, -4);
 }
 
