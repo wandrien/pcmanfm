@@ -212,6 +212,19 @@ static void on_folder_view_sort_changed(FmFolderView* fv, FmMainWin* win)
     update_sort_menu(win);
 }
 
+static void open_context_menu(FmFolderView* fv, FmMainWin* win)
+{
+    FmFileInfoList *files = fm_folder_view_get_selected_files(fv);
+    FmFileInfo *info;
+    if(files && !fm_list_is_empty(files))
+        info = fm_list_peek_head(files);
+    else
+        info = NULL;
+    on_folder_view_clicked(fv, FM_FV_CONTEXT_MENU, info, win);
+    if(files)
+        fm_list_unref(files);
+}
+
 static gboolean on_view_key_press_event(FmFolderView* fv, GdkEventKey* evt, FmMainWin* win)
 {
     int modifier = ( evt->state & ( GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK ) );
@@ -237,18 +250,14 @@ static gboolean on_view_key_press_event(FmFolderView* fv, GdkEventKey* evt, FmMa
         }
         break;
     case GDK_Menu:
+        open_context_menu(fv, win);
+        break;
+    case GDK_F10:
+        if(modifier & GDK_SHIFT_MASK)
         {
-            FmFileInfoList *files = fm_folder_view_get_selected_files(fv);
-            FmFileInfo *info;
-            if(files && !fm_list_is_empty(files))
-                info = fm_list_peek_head(files);
-            else
-                info = NULL;
-            on_folder_view_clicked(fv, FM_FV_CONTEXT_MENU, info, win);
-            if(files)
-                fm_list_unref(files);
-            break;
+            open_context_menu(fv, win);
         }
+        break;
     }
     return FALSE;
 }
