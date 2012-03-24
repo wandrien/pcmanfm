@@ -84,6 +84,7 @@ struct _FmAppConfig
 
     /* default values for folder views */
     guint view_mode;
+    guint hint_type;
     gboolean show_hidden;
     GtkSortType sort_type;
     int sort_by;

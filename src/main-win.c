@@ -83,6 +83,7 @@ static void on_reload(GtkAction* act, FmMainWin* win);
 static void on_show_hidden(GtkToggleAction* act, FmMainWin* win);
 static void on_show_side_pane(GtkToggleAction* act, FmMainWin* win);
 static void on_change_mode(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win);
+static void on_change_hint(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win);
 static void on_sort_by(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win);
 static void on_sort_type(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win);
 static void on_side_pane_mode(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win);
@@ -202,6 +203,8 @@ static void update_view_menu(FmMainWin* win)
     gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(act), FM_FOLDER_VIEW(win->folder_view)->show_hidden);
     act = gtk_ui_manager_get_action(win->ui, "/menubar/ViewMenu/IconView");
     gtk_radio_action_set_current_value(GTK_RADIO_ACTION(act), FM_FOLDER_VIEW(win->folder_view)->mode);
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/ViewMenu/Hint/HintNone");
+    gtk_radio_action_set_current_value(GTK_RADIO_ACTION(act), FM_FOLDER_VIEW(win->folder_view)->hint);
 }
 
 static void on_folder_view_sort_changed(FmFolderView* fv, FmMainWin* win)
@@ -442,6 +445,7 @@ static void fm_main_win_init(FmMainWin *win)
     main_win_toggle_actions[0].is_active = app_config->show_hidden;
     gtk_action_group_add_toggle_actions(act_grp, main_win_toggle_actions, G_N_ELEMENTS(main_win_toggle_actions), win);
     gtk_action_group_add_radio_actions(act_grp, main_win_mode_actions, G_N_ELEMENTS(main_win_mode_actions), app_config->view_mode, on_change_mode, win);
+    gtk_action_group_add_radio_actions(act_grp, main_win_hint_actions, G_N_ELEMENTS(main_win_hint_actions), app_config->hint_type, on_change_hint, win);
     gtk_action_group_add_radio_actions(act_grp, main_win_sort_type_actions, G_N_ELEMENTS(main_win_sort_type_actions), app_config->sort_type, on_sort_type, win);
     gtk_action_group_add_radio_actions(act_grp, main_win_sort_by_actions, G_N_ELEMENTS(main_win_sort_by_actions), app_config->sort_by, on_sort_by, win);
     gtk_action_group_add_radio_actions(act_grp, main_win_side_bar_mode_actions, G_N_ELEMENTS(main_win_side_bar_mode_actions), app_config->side_pane_mode, on_side_pane_mode, win);
@@ -652,6 +656,17 @@ void on_change_mode(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win)
 {
     int mode = gtk_radio_action_get_current_value(cur);
     fm_folder_view_set_mode( FM_FOLDER_VIEW(win->folder_view), mode );
+}
+
+void on_change_hint(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win)
+{
+    int hint = gtk_radio_action_get_current_value(cur);
+    fm_folder_view_set_hint_type( FM_FOLDER_VIEW(win->folder_view), hint );
+    if(hint != app_config->hint_type)
+    {
+        app_config->hint_type = hint;
+        pcmanfm_save_config(FALSE);
+    }
 }
 
 void on_sort_by(GtkRadioAction* act, GtkRadioAction *cur, FmMainWin* win)

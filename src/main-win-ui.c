@@ -89,6 +89,14 @@ static const char main_menu_xml[] =
     "<menuitem action='ThumbnailView'/>"
     "<menuitem action='ListView'/>"
     "<separator/>"
+    "<menu action='Hint'>"
+      "<menuitem action='HintNone'/>"
+      "<menuitem action='HintAuto'/>"
+      "<menuitem action='HintMTime'/>"
+      "<menuitem action='HintSize'/>"
+      "<menuitem action='HintType'/>"
+    "</menu>"
+    "<separator/>"
     "<menu action='Sort'>"
       "<menuitem action='Asc'/>"
       "<menuitem action='Desc'/>"
@@ -165,6 +173,7 @@ static GtkActionEntry main_win_actions[]=
         {"Reload", NULL, N_("Reload Folder"), "F5", N_("Reload current folder"), G_CALLBACK(on_reload)},
         {"SidePane", NULL, N_("Side Pane"), NULL, NULL, NULL},
         {"Sort", NULL, N_("_Sort Files"), NULL, NULL, NULL},
+        {"Hint", NULL, N_("_Hints"), NULL, NULL, NULL},
         {"ZoomIn", NULL, N_("Zoom I_n"), "<Ctrl>plus", NULL, G_CALLBACK(on_zoom_in)},
         {"ZoomOut", NULL, N_("Zoom _Out"), "<Ctrl>minus", NULL, G_CALLBACK(on_zoom_out)},
 /*        {"ZoomInKP", NULL, N_("Zoom I_n"), "<Ctrl>KP_Add", NULL, G_CALLBACK(on_zoom_in)},
@@ -213,6 +222,15 @@ static GtkRadioActionEntry main_win_mode_actions[]=
     {"IconView", NULL, N_("_Icon View"), "<Ctrl>3", NULL, FM_FV_ICON_VIEW},
     {"ThumbnailView", NULL, N_("_Thumbnail View"), "<Ctrl>4", NULL, FM_FV_THUMBNAIL_VIEW},
     {"ListView", NULL, N_("Detailed _List View"), "<Ctrl>5", NULL, FM_FV_LIST_VIEW},
+};
+
+static GtkRadioActionEntry main_win_hint_actions[]=
+{
+    {"HintNone", NULL, N_("_None"), NULL, NULL, FM_FV_HINT_NONE},
+    {"HintAuto", NULL, N_("_Auto"), NULL, NULL, FM_FV_HINT_AUTO},
+    {"HintMTime", NULL, N_("_Modification Time"), NULL, NULL, FM_FV_HINT_MTIME},
+    {"HintSize", NULL, N_("_Size"), NULL, NULL, FM_FV_HINT_SIZE},
+    {"HintType", NULL, N_("_Type"), NULL, NULL, FM_FV_HINT_DESC},
 };
 
 static GtkRadioActionEntry main_win_sort_type_actions[]=

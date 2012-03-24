@@ -329,6 +329,7 @@ static void fm_tab_page_init(FmTabPage *page)
 
     page->folder_view = fm_folder_view_new(app_config->view_mode);
     folder_view = FM_FOLDER_VIEW(page->folder_view);
+    fm_folder_view_set_hint_type(folder_view, app_config->hint_type);
     fm_folder_view_sort(folder_view, app_config->sort_type, app_config->sort_by);
     fm_folder_view_set_selection_mode(folder_view, GTK_SELECTION_MULTIPLE);
     page->nav_history = fm_nav_history_new();
