@@ -852,6 +852,21 @@ gboolean on_leave_notify( GtkWidget* w, GdkEventCrossing *evt )
     return TRUE;
 }
 
+static open_context_menu(FmDesktop* desktop, GdkEventKey* evt)
+{
+    FmFileInfoList* files = fm_desktop_get_selected_files(desktop);
+    if (files)
+    {
+        popup_menu(desktop, evt);
+        fm_list_unref(files);
+    }
+    else
+    {
+        if (!app_config->show_wm_menu)
+            gtk_menu_popup(GTK_MENU(desktop_popup), NULL, NULL, NULL, NULL, 3, evt->time);
+    }
+}
+
 gboolean on_key_press( GtkWidget* w, GdkEventKey* evt )
 {
     FmDesktop* desktop = (FmDesktop*)w;
@@ -861,18 +876,12 @@ gboolean on_key_press( GtkWidget* w, GdkEventKey* evt )
     switch ( evt->keyval )
     {
     case GDK_Menu:
+        open_context_menu(desktop, evt);
+        return TRUE;
+    case GDK_F10:
+        if(modifier & GDK_SHIFT_MASK)
         {
-            FmFileInfoList* files = fm_desktop_get_selected_files(desktop);
-            if(files)
-            {
-                popup_menu(desktop, evt);
-                fm_list_unref(files);
-            }
-            else
-            {
-                if(! app_config->show_wm_menu)
-                    gtk_menu_popup(GTK_MENU(desktop_popup), NULL, NULL, NULL, NULL, 3, evt->time);
-            }
+            open_context_menu(desktop, evt);
             return TRUE;
         }
     case GDK_Left:
