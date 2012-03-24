@@ -83,9 +83,10 @@ static const char main_menu_xml[] =
     "<menuitem action='ZoomIn'/>"
     "<menuitem action='ZoomOut'/>"
     "<separator/>"
+    "<menuitem action='CompactView'/>"
+    "<menuitem action='VerticalCompactView'/>"
     "<menuitem action='IconView'/>"
     "<menuitem action='ThumbnailView'/>"
-    "<menuitem action='CompactView'/>"
     "<menuitem action='ListView'/>"
     "<separator/>"
     "<menu action='Sort'>"
@@ -207,10 +208,11 @@ static GtkToggleActionEntry main_win_toggle_actions[]=
 
 static GtkRadioActionEntry main_win_mode_actions[]=
 {
-    {"IconView", NULL, N_("_Icon View"), "<Ctrl>1", NULL, FM_FV_ICON_VIEW},
-    {"CompactView", NULL, N_("_Compact View"), "<Ctrl>2", NULL, FM_FV_COMPACT_VIEW},
-    {"ThumbnailView", NULL, N_("_Thumbnail View"), "<Ctrl>3", NULL, FM_FV_THUMBNAIL_VIEW},
-    {"ListView", NULL, N_("Detailed _List View"), "<Ctrl>4", NULL, FM_FV_LIST_VIEW},
+    {"CompactView", NULL, N_("_Compact View (hor.)"), "<Ctrl>1", NULL, FM_FV_COMPACT_VIEW},
+    {"VerticalCompactView", NULL, N_("_Compact View (vert.)"), "<Ctrl>2", NULL, FM_FV_VERTICAL_COMPACT_VIEW},
+    {"IconView", NULL, N_("_Icon View"), "<Ctrl>3", NULL, FM_FV_ICON_VIEW},
+    {"ThumbnailView", NULL, N_("_Thumbnail View"), "<Ctrl>4", NULL, FM_FV_THUMBNAIL_VIEW},
+    {"ListView", NULL, N_("Detailed _List View"), "<Ctrl>5", NULL, FM_FV_LIST_VIEW},
 };
 
 static GtkRadioActionEntry main_win_sort_type_actions[]=
