@@ -2326,6 +2326,13 @@ static gboolean on_drag_motion ( GtkWidget *dest_widget,
 
     /* check if we're dragging over an item */
     item = hit_test(desktop, x, y);
+
+    desktop->dragging2 = desktop->dragging;
+
+    /* dragging an desktop item over itself? */
+    if (item && item->is_selected && desktop->dragging)
+        item = NULL;
+
     /* we can only allow dropping on desktop entry file, folder, or executable files */
     if(item)
     {
@@ -2463,6 +2470,13 @@ static gboolean on_drag_drop ( GtkWidget *dest_widget,
 
     /* check if we're dragging over an item */
     item = hit_test(desktop, x, y);
+
+    /* dragging an desktop item over itself? */
+    if (item && item->is_selected && desktop->dragging2)
+        item = NULL;
+
+    desktop->dragging2 = FALSE;
+
     /* we can only allow dropping on desktop entry file, folder, or executable files */
     if(item)
     {
