@@ -103,6 +103,8 @@ static void on_notebook_page_removed(GtkNotebook* nb, GtkWidget* page, guint num
 
 static void on_folder_view_clicked(FmFolderView* fv, FmFolderViewClickType type, FmFileInfo* fi, FmMainWin* win);
 
+static void zoom(FmMainWin* win, int delta);
+
 static void on_zoom_in(GtkAction* act, FmMainWin* win);
 static void on_zoom_out(GtkAction* act, FmMainWin* win);
 
@@ -238,15 +240,17 @@ static gboolean on_view_key_press_event(FmFolderView* fv, GdkEventKey* evt, FmMa
         on_del(NULL, win);
         break;
     case GDK_KP_Add:
-        if(modifier & GDK_CONTROL_MASK)
+        if (modifier & GDK_CONTROL_MASK)
         {
-            on_zoom_in(NULL, win);
+            //on_zoom_in(NULL, win);
+            zoom(win, (modifier & GDK_SHIFT_MASK) ? 4 : 8);
         }
         break;
     case GDK_KP_Subtract:
-        if(modifier & GDK_CONTROL_MASK)
+        if (modifier & GDK_CONTROL_MASK)
         {
-            on_zoom_out(NULL, win);
+            //on_zoom_out(NULL, win);
+            zoom(win, (modifier & GDK_SHIFT_MASK) ? -4 : -8);
         }
         break;
     case GDK_Menu:
@@ -1408,6 +1412,7 @@ static void zoom(FmMainWin* win, int delta)
         case FM_FV_ICON_VIEW:
             val = &fm_config->big_icon_size;
             key_name = "big_icon_size";
+            max_value = 256;
             break;
         case FM_FV_LIST_VIEW:
         case FM_FV_COMPACT_VIEW:
@@ -1439,10 +1444,12 @@ static void zoom(FmMainWin* win, int delta)
 
     if (v > max_value)
         v = max_value;
-    if (v < 16)
-        v = 16;
+    if (v < 12)
+        v = 12;
 
     *val = v;
+
+    //g_print("icon size %d\n", v);
 
     fm_config_emit_changed(fm_config, key_name);
 }
@@ -1450,11 +1457,11 @@ static void zoom(FmMainWin* win, int delta)
 
 static void on_zoom_in(GtkAction* act, FmMainWin* win)
 {
-    zoom(win, 4);
+    zoom(win, 8);
 }
 
 static void on_zoom_out(GtkAction* act, FmMainWin* win)
 {
-    zoom(win, -4);
+    zoom(win, -8);
 }
 
