@@ -1156,6 +1156,12 @@ static gboolean is_point_in_rect( GdkRectangle* rect, int x, int y )
 
 FmDesktopItem* hit_test(FmDesktop* self, int x, int y)
 {
+    /*
+        Items painted from first to last, so last items are "above" in z-order.
+        We should find the last matched item, since this is consistent
+        with the expected behavior.
+    */
+    FmDesktopItem* result = NULL;
     FmDesktopItem* item;
     GList* l;
     for( l = self->items; l; l = l->next )
@@ -1163,9 +1169,11 @@ FmDesktopItem* hit_test(FmDesktop* self, int x, int y)
         item = (FmDesktopItem*) l->data;
         if( is_point_in_rect( &item->icon_rect, x, y )
          || is_point_in_rect( &item->text_rect, x, y ) )
-            return item;
+        {
+            result = item;
+        }
     }
-    return NULL;
+    return result;
 }
 
 FmDesktopItem* get_nearest_item(FmDesktop* desktop, FmDesktopItem* item,  GtkDirectionType dir)
