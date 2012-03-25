@@ -1322,6 +1322,9 @@ void on_row_deleted(GtkTreeModel* mod, GtkTreePath* tp, FmDesktop* desktop)
         FmDesktopItem* item = (FmDesktopItem*)l->data;
         if(i == idx)
         {
+            if (item->fixed_pos)
+                desktop->fixed_items = g_list_remove(desktop->fixed_items, item);
+
             desktop_item_free(item);
             if(desktop->focus == item)
             {
@@ -1438,11 +1441,16 @@ static gboolean is_pos_occupied(FmDesktop* desktop, FmDesktopItem* item)
     for(l = desktop->fixed_items; l; l=l->next)
     {
         FmDesktopItem* fixed = (FmDesktopItem*)l->data;
+        if (fixed == item)
+            continue;
         GdkRectangle rect;
         get_item_rect(fixed, &rect);
         if(gdk_rectangle_intersect(&rect, &item->icon_rect, NULL)
          ||gdk_rectangle_intersect(&rect, &item->text_rect, NULL))
+        {
+            //g_print("%s intersects with %s\n", fm_file_info_get_disp_name(item->fi), fm_file_info_get_disp_name(fixed->fi));
             return TRUE;
+        }
     }
     return FALSE;
 }
