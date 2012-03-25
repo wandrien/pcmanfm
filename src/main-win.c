@@ -1411,6 +1411,7 @@ static void zoom(FmMainWin* win, int delta)
             break;
         case FM_FV_LIST_VIEW:
         case FM_FV_COMPACT_VIEW:
+        case FM_FV_VERTICAL_COMPACT_VIEW:
             val = &fm_config->small_icon_size;
             key_name = "small_icon_size";
             break;
