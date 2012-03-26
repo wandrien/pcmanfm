@@ -189,7 +189,36 @@ static FmJobErrorAction on_query_target_info_error(FmJob* job, GError* err, FmJo
     return FM_JOB_CONTINUE;
 }
 
-static void update_sort_menu(FmMainWin* win)
+static void update_nav_actions(FmMainWin* win)
+{
+    gboolean can_prev = fm_nav_history_get_can_back(win->nav_history);
+    gboolean can_next = fm_nav_history_get_can_forward(win->nav_history);
+
+    GtkAction* act;
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/GoMenu/Prev");
+    gtk_action_set_sensitive(act, can_prev);
+
+    act = gtk_ui_manager_get_action(win->ui, "/Prev2");
+    gtk_action_set_sensitive(act, can_prev);
+
+    /* FIXME: This blocks NavHistory popup menu. */
+/*
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/GoMenu/Next");
+    gtk_action_set_sensitive(act, can_next);
+
+    act = gtk_ui_manager_get_action(win->ui, "/Next2");
+    gtk_action_set_sensitive(act, can_next);
+*/
+
+    FmPath* cwd = fm_folder_view_get_cwd(FM_FOLDER_VIEW(win->folder_view));
+    FmPath* parent = fm_path_get_parent(cwd);
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/GoMenu/Up");
+    gtk_action_set_sensitive(act, parent != NULL);
+}
+
+static void update_sort_actions(FmMainWin* win)
 {
     GtkAction* act;
     act = gtk_ui_manager_get_action(win->ui, "/menubar/ViewMenu/Sort/Asc");
@@ -198,7 +227,7 @@ static void update_sort_menu(FmMainWin* win)
     gtk_radio_action_set_current_value(GTK_RADIO_ACTION(act), FM_FOLDER_VIEW(win->folder_view)->sort_by);
 }
 
-static void update_view_menu(FmMainWin* win)
+static void update_view_actions(FmMainWin* win)
 {
     GtkAction* act;
     act = gtk_ui_manager_get_action(win->ui, "/menubar/ViewMenu/ShowHidden");
@@ -211,7 +240,7 @@ static void update_view_menu(FmMainWin* win)
 
 static void on_folder_view_sort_changed(FmFolderView* fv, FmMainWin* win)
 {
-    update_sort_menu(win);
+    update_sort_actions(win);
 }
 
 static void open_context_menu(FmFolderView* fv, FmMainWin* win)
@@ -1187,6 +1216,7 @@ static void on_tab_page_chdir(FmTabPage* page, FmPath* path, FmMainWin* win)
 {
     fm_path_entry_set_path(win->location, path);
     gtk_window_set_title(GTK_WINDOW(win), fm_tab_page_get_title(page));
+    update_nav_actions(win);
 }
 
 static void on_notebook_switch_page(GtkNotebook* nb, GtkNotebookPage* new_page, guint num, FmMainWin* win)
@@ -1241,8 +1271,9 @@ static void on_notebook_switch_page(GtkNotebook* nb, GtkNotebookPage* new_page, 
     fm_path_entry_set_path( FM_PATH_ENTRY(win->location), cwd);
     gtk_window_set_title((GtkWindow*)win, fm_tab_page_get_title(page));
 
-    update_sort_menu(win);
-    update_view_menu(win);
+    update_sort_actions(win);
+    update_view_actions(win);
+    update_nav_actions(win);
     update_statusbar(win);
 
     /* FIXME: this does not work sometimes due to limitation of GtkNotebook.
