@@ -218,6 +218,34 @@ static void update_nav_actions(FmMainWin* win)
     gtk_action_set_sensitive(act, parent != NULL);
 }
 
+static void update_selection_actions(FmMainWin* win, FmFileInfoList* files)
+{
+    unsigned items_num = 0;
+
+    if (files)
+        items_num = fm_list_get_length(files) ;
+
+    GtkAction* act;
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/Cut");
+    gtk_action_set_sensitive(act, items_num > 0);
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/Copy");
+    gtk_action_set_sensitive(act, items_num > 0);
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/Del");
+    gtk_action_set_sensitive(act, items_num > 0);
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/Rename");
+    gtk_action_set_sensitive(act, items_num == 1);
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/MoveTo");
+    gtk_action_set_sensitive(act, items_num > 0);
+
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/CopyTo");
+    gtk_action_set_sensitive(act, items_num > 0);
+}
+
 static void update_sort_actions(FmMainWin* win)
 {
     GtkAction* act;
@@ -1182,6 +1210,12 @@ static void on_folder_view_clicked(FmFolderView* fv, FmFolderViewClickType type,
 }
 
 /* This callback is only connected to current active tab page. */
+static void on_folder_view_sel_changed(FmFolderView* fv, FmFileInfoList* files, FmMainWin* win)
+{
+    update_selection_actions(win, files);
+}
+
+/* This callback is only connected to current active tab page. */
 static void on_tab_page_status_text(FmTabPage* page, guint type, const char* status_text, FmMainWin* win)
 {
     switch(type)
@@ -1239,6 +1273,8 @@ static void on_notebook_switch_page(GtkNotebook* nb, GtkNotebookPage* new_page, 
                                              on_folder_view_sort_changed, win);
         g_signal_handlers_disconnect_by_func(win->folder_view,
                                              on_folder_view_clicked, win);
+        g_signal_handlers_disconnect_by_func(win->folder_view,
+                                             on_folder_view_sel_changed, win);
         g_signal_handlers_disconnect_by_func(win->side_pane,
                                              on_side_pane_mode_changed, win);
         g_signal_handlers_disconnect_by_func(win->side_pane,
@@ -1262,6 +1298,8 @@ static void on_notebook_switch_page(GtkNotebook* nb, GtkNotebookPage* new_page, 
                      G_CALLBACK(on_folder_view_sort_changed), win);
     g_signal_connect(folder_view, "clicked",
                      G_CALLBACK(on_folder_view_clicked), win);
+    g_signal_connect(folder_view, "sel-changed",
+                     G_CALLBACK(on_folder_view_sel_changed), win);
     g_signal_connect(win->side_pane, "mode-changed",
                      G_CALLBACK(on_side_pane_mode_changed), win);
     g_signal_connect(win->side_pane, "chdir",
@@ -1271,10 +1309,16 @@ static void on_notebook_switch_page(GtkNotebook* nb, GtkNotebookPage* new_page, 
     fm_path_entry_set_path( FM_PATH_ENTRY(win->location), cwd);
     gtk_window_set_title((GtkWindow*)win, fm_tab_page_get_title(page));
 
+    FmFileInfoList *files = fm_folder_view_get_selected_files(folder_view);
+
     update_sort_actions(win);
     update_view_actions(win);
     update_nav_actions(win);
+    update_selection_actions(win, files);
     update_statusbar(win);
+
+    if (files)
+        fm_list_unref(files);
 
     /* FIXME: this does not work sometimes due to limitation of GtkNotebook.
      * So weird. After page switching with mouse button, GTK+ always tries
@@ -1290,7 +1334,6 @@ void on_notebook_page_added(GtkNotebook* nb, GtkWidget* page, guint num, FmMainW
     else
         gtk_notebook_set_show_tabs(nb, FALSE);
 }
-
 
 void on_notebook_page_removed(GtkNotebook* nb, GtkWidget* page, guint num, FmMainWin* win)
 {
