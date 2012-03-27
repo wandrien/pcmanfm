@@ -1134,11 +1134,18 @@ void on_location(GtkAction* act, FmMainWin* win)
 void on_prop(GtkAction* action, FmMainWin* win)
 {
     FmFolderView* fv = FM_FOLDER_VIEW(win->folder_view);
-    /* FIXME: should prevent directly accessing data members */
-    FmFileInfo* fi = FM_FOLDER_MODEL(fv->model)->dir->dir_fi;
-    FmFileInfoList* files = fm_file_info_list_new();
-    fm_list_push_tail(files, fi);
+    FmFileInfoList* files = fm_folder_view_get_selected_files(fv);
+    
+    if (!files)
+    {
+        /* FIXME: should prevent directly accessing data members */
+        FmFileInfo* fi = FM_FOLDER_MODEL(fv->model)->dir->dir_fi;
+        files = fm_file_info_list_new();
+        fm_list_push_tail(files, fi);
+    }
+
     fm_show_file_properties(GTK_WINDOW(win), files);
+
     fm_list_unref(files);
 }
 
@@ -1417,6 +1424,10 @@ gboolean on_key_press_event(GtkWidget* w, GdkEventKey* evt)
                 n = evt->keyval - '1';
             gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), n);
             return TRUE;
+        }
+        else if (evt->keyval == GDK_Return)
+        {
+            on_prop(NULL, win);
         }
     }
     else if(evt->state == GDK_CONTROL_MASK) /* Ctrl */
