@@ -1251,6 +1251,13 @@ static void on_tab_page_chdir(FmTabPage* page, FmPath* path, FmMainWin* win)
     fm_path_entry_set_path(win->location, path);
     gtk_window_set_title(GTK_WINDOW(win), fm_tab_page_get_title(page));
     update_nav_actions(win);
+
+    FmFileInfoList *files = fm_folder_view_get_selected_files(win->folder_view);
+
+    update_selection_actions(win, files);
+
+    if (files)
+        fm_list_unref(files);
 }
 
 static void on_notebook_switch_page(GtkNotebook* nb, GtkNotebookPage* new_page, guint num, FmMainWin* win)
