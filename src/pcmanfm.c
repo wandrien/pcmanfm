@@ -495,7 +495,7 @@ void pcmanfm_open_folder_in_terminal(GtkWindow* parent, FmPath* dir)
 }
 
 /* FIXME: Need to load content of ~/Templates and list available templates in popup menus. */
-void pcmanfm_create_new(GtkWindow* parent, FmPath* cwd, const char* templ)
+void pcmanfm_create_new(GtkWindow* parent, FmPath* cwd, const char* templ, const char* name_templ)
 {
     GError* err = NULL;
     FmPath* dest;
@@ -507,7 +507,7 @@ _retry:
         msg = N_("Enter a name for the newly created folder:");
     else
         msg = N_("Enter a name for the newly created file:");
-    basename = fm_get_user_input(parent, _("Create New..."), _(msg), _("New"));
+    basename = fm_get_user_input(parent, _("Create New..."), _(msg), name_templ ? name_templ : _("New"));
     if(!basename)
         return;
 

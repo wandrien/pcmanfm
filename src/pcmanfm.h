@@ -44,7 +44,7 @@ void pcmanfm_open_folder_in_terminal(GtkWindow* parent, FmPath* dir);
 
 #define TEMPL_NAME_FOLDER    NULL
 #define TEMPL_NAME_BLANK     (const char*)-1
-void pcmanfm_create_new(GtkWindow* parent, FmPath* cwd, const char* templ);
+void pcmanfm_create_new(GtkWindow* parent, FmPath* cwd, const char* templ, const char* name_templ);
 
 G_END_DECLS
 

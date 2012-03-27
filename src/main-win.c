@@ -1357,6 +1357,23 @@ void on_notebook_page_removed(GtkNotebook* nb, GtkWidget* page, guint num, FmMai
 
 void on_create_new(GtkAction* action, FmMainWin* win)
 {
+    FmFileInfoList * files = fm_folder_view_get_selected_files(win->folder_view);
+    unsigned items_num = 0;
+    char * filename = NULL;
+
+    if (files)
+        items_num = fm_list_get_length(files) ;
+
+    if (items_num == 1)
+    {
+        FmFileInfo * fi = fm_list_peek_head(files);
+        FmPath* path = fm_file_info_get_path(fi);
+        filename = fm_path_display_basename(path);
+    }
+
+    if (files)
+        fm_list_unref(files);
+
     FmFolderView* fv = FM_FOLDER_VIEW(win->folder_view);
     const char* name = gtk_action_get_name(action);
 
@@ -1364,7 +1381,10 @@ void on_create_new(GtkAction* action, FmMainWin* win)
         name = TEMPL_NAME_FOLDER;
     else if( strcmp(name, "NewBlank") == 0 )
         name = TEMPL_NAME_BLANK;
-    pcmanfm_create_new(GTK_WINDOW(win), fm_folder_view_get_cwd(fv), name);
+    pcmanfm_create_new(GTK_WINDOW(win), fm_folder_view_get_cwd(fv), name, filename);
+
+    if (filename)
+        g_free(filename);
 }
 
 FmMainWin* fm_main_win_get_last_active()
