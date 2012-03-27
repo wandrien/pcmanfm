@@ -841,8 +841,9 @@ void on_open_in_new_win(GtkAction* act, FmMainWin* win)
 
 void on_go(GtkAction* act, FmMainWin* win)
 {
-    FmPath* path = fm_path_entry_get_path(FM_PATH_ENTRY(win->location));
-    fm_main_win_chdir(win, path);
+//    FmPath* path = fm_path_entry_get_path(FM_PATH_ENTRY(win->location));
+//    fm_main_win_chdir(win, path);
+    fm_path_entry_activate(FM_PATH_ENTRY(win->location));
 }
 
 void on_go_back(GtkAction* act, FmMainWin* win)
