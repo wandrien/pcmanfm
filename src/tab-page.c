@@ -373,6 +373,11 @@ static void fm_tab_page_chdir_without_history(FmTabPage* page, FmPath* path)
 {
     FmFolderView* folder_view = FM_FOLDER_VIEW(page->folder_view);
     FmFolder* folder = fm_folder_view_get_folder(folder_view);
+
+    char * disp_path = fm_path_display_name(path, FALSE);
+    fm_tab_label_set_tooltip_text(FM_TAB_LABEL(page->tab_label), disp_path);
+    g_free(disp_path);
+
     char* disp_name = fm_path_display_basename(path);
     fm_tab_label_set_text(FM_TAB_LABEL(page->tab_label), disp_name);
     g_free(disp_name);
