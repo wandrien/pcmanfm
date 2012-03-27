@@ -141,6 +141,7 @@ void fm_app_config_load_from_key_file(FmAppConfig* cfg, GKeyFile* kf)
     fm_key_file_get_int(kf, "ui", "splitter_pos", &cfg->splitter_pos);
 
     fm_key_file_get_int(kf, "ui", "side_pane_mode", &cfg->side_pane_mode);
+    fm_key_file_get_int(kf, "ui", "show_side_pane", &cfg->show_side_pane);
 
     /* default values for folder views */
     fm_key_file_get_int(kf, "ui", "view_mode", &cfg->view_mode);
@@ -260,6 +261,7 @@ void fm_app_config_save_profile(FmAppConfig* cfg, const char* name)
         g_string_append_printf(buf, "win_width=%d\n", cfg->win_width);
         g_string_append_printf(buf, "win_height=%d\n", cfg->win_height);
         g_string_append_printf(buf, "splitter_pos=%d\n", cfg->splitter_pos);
+        g_string_append_printf(buf, "show_side_pane=%d\n", cfg->show_side_pane);
         g_string_append_printf(buf, "side_pane_mode=%d\n", cfg->side_pane_mode);
         g_string_append_printf(buf, "view_mode=%d\n", cfg->view_mode);
         g_string_append_printf(buf, "hint_type=%d\n", cfg->hint_type);

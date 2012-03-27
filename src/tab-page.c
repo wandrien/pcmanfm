@@ -506,3 +506,8 @@ void fm_tab_page_reload(FmTabPage* page)
     if(folder)
         fm_folder_reload(folder);
 }
+
+void fm_tab_page_set_show_side_pane(FmTabPage* page, gboolean value)
+{
+    gtk_widget_set_visible(GTK_WIDGET(page->side_pane), value);
+}

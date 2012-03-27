@@ -81,6 +81,7 @@ struct _FmAppConfig
     int splitter_pos;
 
     FmSidePaneMode side_pane_mode;
+    gboolean show_side_pane;
 
     /* default values for folder views */
     guint view_mode;

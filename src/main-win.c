@@ -40,6 +40,8 @@
 static void fm_main_win_finalize              (GObject *object);
 G_DEFINE_TYPE(FmMainWin, fm_main_win, GTK_TYPE_WINDOW);
 
+static void apply_show_side_pane(FmMainWin* win);
+
 static void update_statusbar(FmMainWin* win);
 
 static void on_focus_in(GtkWidget* w, GdkEventFocus* evt);
@@ -608,6 +610,9 @@ static void fm_main_win_init(FmMainWin *win)
 
     gtk_container_add( (GtkContainer*)win, vbox );
     gtk_widget_show_all(vbox);
+
+    win->show_side_pane = app_config->show_side_pane;
+    apply_show_side_pane(win);
 }
 
 
@@ -964,6 +969,7 @@ static void update_statusbar(FmMainWin* win)
 gint fm_main_win_add_tab(FmMainWin* win, FmPath* path)
 {
     FmTabPage* page = (FmTabPage*)fm_tab_page_new(path);
+    fm_tab_page_set_show_side_pane(page, win->show_side_pane);
     FmTabLabel* label = FM_TAB_LABEL(page->tab_label);
     GtkWidget* folder_view = fm_tab_page_get_folder_view(page);
     gint ret;
@@ -1135,7 +1141,7 @@ void on_prop(GtkAction* action, FmMainWin* win)
 {
     FmFolderView* fv = FM_FOLDER_VIEW(win->folder_view);
     FmFileInfoList* files = fm_folder_view_get_selected_files(fv);
-    
+
     if (!files)
     {
         /* FIXME: should prevent directly accessing data members */
@@ -1507,11 +1513,39 @@ static void on_reload(GtkAction* act, FmMainWin* win)
     fm_tab_page_reload(page);
 }
 
-static void on_show_side_pane(GtkToggleAction* act, FmMainWin* win)
+static void apply_show_side_pane(FmMainWin* win)
 {
-    /* TODO: hide the side pane if the user wants to. */
+    GList* children = gtk_container_get_children(GTK_CONTAINER(win->notebook));
+    GList* child;
+    /* set the side pane mode to all other tab pages */
+    for(child = children; child; child = child->next)
+    {
+        FmTabPage* page = FM_TAB_PAGE(child->data);
+        fm_tab_page_set_show_side_pane(page, win->show_side_pane);
+    }
+    g_list_free(children);
+
+    GtkAction * act = gtk_ui_manager_get_action(win->ui, "/menubar/ViewMenu/SidePane/ShowSidePane");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(act), win->show_side_pane);
+
+    if (win->show_side_pane != app_config->show_side_pane)
+    {
+        app_config->show_side_pane = win->show_side_pane;
+        //fm_config_emit_changed(app_config, "show_side_pane");
+        pcmanfm_save_config(FALSE);
+    }
 }
 
+static void on_show_side_pane(GtkToggleAction* act, FmMainWin* win)
+{
+    gboolean value = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(act));
+
+    if (value != win->show_side_pane)
+    {
+       win->show_side_pane = value;
+       apply_show_side_pane(win);
+    }
+}
 
 static void zoom(FmMainWin* win, int delta)
 {

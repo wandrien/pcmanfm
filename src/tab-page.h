@@ -103,6 +103,8 @@ const char* fm_tab_page_get_title(FmTabPage* page);
 /* get normal status text */
 const char* fm_tab_page_get_status_text(FmTabPage* page, FmStatusTextType type);
 
+void fm_tab_page_set_show_side_pane(FmTabPage* page, gboolean value);
+
 G_END_DECLS
 
 #endif /* __FM_TAB_PAGE_H__ */

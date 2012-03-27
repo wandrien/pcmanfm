@@ -62,6 +62,7 @@ struct _FmMainWin
     guint statusbar_ctx;
     guint statusbar_ctx2;
     FmBookmarks* bookmarks;
+    gboolean show_side_pane;
 };
 
 struct _FmMainWinClass
