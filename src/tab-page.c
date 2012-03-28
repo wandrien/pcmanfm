@@ -212,11 +212,26 @@ static void on_folder_view_sel_changed(FmFolderView* fv, FmFileInfoList* files, 
     {
         FmFileInfo* fi = fm_list_peek_head(files);
         const char* size_str = fm_file_info_get_disp_size(fi);
-        if (size_str)
+        gboolean is_link = fm_file_info_is_symlink(fi);
+        if (is_link && size_str)
+        {
+            msg = g_strdup_printf("\"%s\" link to \"%s\" (%s)",
+                                  fm_file_info_get_disp_name(fi),
+                                  fm_file_info_get_target(fi),
+                                  size_str);
+        }
+        else if (is_link)
+        {
+            msg = g_strdup_printf("\"%s\" link to \"%s\"",
+                                  fm_file_info_get_disp_name(fi),
+                                  fm_file_info_get_target(fi));
+        }
+        else if (size_str)
         {
             msg = g_strdup_printf("\"%s\" (%s) %s",
                                   fm_file_info_get_disp_name(fi),
-                                  size_str ? size_str : "", fm_file_info_get_desc(fi));
+                                  size_str,
+                                  fm_file_info_get_desc(fi));
         }
         else
         {
