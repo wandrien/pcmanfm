@@ -174,8 +174,6 @@ static GtkActionEntry main_win_actions[]=
         {"Hint", NULL, N_("_Hints"), NULL, NULL, NULL},
         {"ZoomIn", NULL, N_("Zoom I_n"), "<Ctrl>plus", NULL, G_CALLBACK(on_zoom_in)},
         {"ZoomOut", NULL, N_("Zoom _Out"), "<Ctrl>minus", NULL, G_CALLBACK(on_zoom_out)},
-/*        {"ZoomInKP", NULL, N_("Zoom I_n"), "<Ctrl>KP_Add", NULL, G_CALLBACK(on_zoom_in)},
-        {"ZoomOutKP", NULL, N_("Zoom _Out"), "<Ctrl>KP_Subtract", NULL, G_CALLBACK(on_zoom_out)},*/
     {"HelpMenu", NULL, N_("_Help"), NULL, NULL, NULL},
         {"About", GTK_STOCK_ABOUT, NULL, NULL, NULL, G_CALLBACK(on_about)},
     {"GoMenu", NULL, N_("_Go"), NULL, NULL, NULL},

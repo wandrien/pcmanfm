@@ -153,81 +153,77 @@ static void on_folder_view_sel_changed(FmFolderView* fv, FmFileInfoList* files, 
 {
     char* msg = page->status_text[FM_STATUS_TEXT_SELECTED_FILES];
     g_free(msg);
+    msg = NULL;
 
     // use SI metric by default
     static gboolean use_si_prefix = TRUE ;
 
-    if(files)
+    unsigned items_num = 0;
+
+    if (files)
+        items_num = fm_list_get_length(files) ;
+
+    if (items_num > 1) // multiple items are selected
     {
-        unsigned items_num = fm_list_get_length(files) ;
         goffset items_totalsize = 0 ;
 
-        if ( items_num > 1) // multiple items are selected
+        // whether selected items contain dir
+        gboolean items_contain_dir  = FALSE ;
+
+        GList* l;
+        for (l=fm_list_peek_head_link(files);l;l=l->next)
         {
-            // whether selected items contain dir
-            gboolean items_contain_dir  = FALSE ;
+            FmFileInfo* fi = (FmFileInfo*)l->data;
 
-            GList* l;
-            for(l=fm_list_peek_head_link(files);l;l=l->next)
+            // ignore dir when calculating total size. because that
+            // may take a long long time, not suitable for updating
+            // statusbar in real time.
+            if (fm_file_info_is_dir(fi) )
             {
-                FmFileInfo* fi = (FmFileInfo*)l->data;
-
-                // ignore dir when calculating total size. because that
-                // may take a long long time, not suitable for updating
-                // statusbar in real time.
-                if( fm_file_info_is_dir(fi) )
-                {
-                    items_contain_dir = TRUE;
-                }
-                else
-                {
-                    // Non-dir items are regard as files
-                    // Should extra logic be added for different kinds of files?
-                    // hardlink, symlink, pipe, socket ?
-                    items_totalsize += fm_file_info_get_size(fi) ;
-                }
-            }
-
-            // when the selected items contain dir, do not show size info on the
-            // statusbar, because the calculated total size counts for files only
-            // and showing it would be misleading to the user.
-            if ( items_contain_dir  )
-            {
-                msg = g_strdup_printf("%d items selected", items_num);
+                items_contain_dir = TRUE;
             }
             else
             {
-                char items_totalsize_str[ 64 ];
-                fm_file_size_to_str( items_totalsize_str, items_totalsize, use_si_prefix );
-
-                msg = g_strdup_printf("%d items selected, total size: %s", \
-                                      items_num, items_totalsize_str);
-            }
-
-        } // end for 'multiple items are selected'
-        else
-        {
-            FmFileInfo* fi = fm_list_peek_head(files);
-            const char* size_str = fm_file_info_get_disp_size(fi);
-            if(size_str)
-            {
-                msg = g_strdup_printf("\"%s\" (%s) %s",
-                            fm_file_info_get_disp_name(fi),
-                            size_str ? size_str : "",
-                            fm_file_info_get_desc(fi));
-            }
-            else
-            {
-                msg = g_strdup_printf("\"%s\" %s",
-                            fm_file_info_get_disp_name(fi),
-                            fm_file_info_get_desc(fi));
+                // Non-dir items are regard as files
+                // Should extra logic be added for different kinds of files?
+                // hardlink, symlink, pipe, socket ?
+                items_totalsize += fm_file_info_get_size(fi) ;
             }
         }
 
-    } // end of 'any item is selected'.
-    else
+        // when the selected items contain dir, do not show size info on the
+        // statusbar, because the calculated total size counts for files only
+        // and showing it would be misleading to the user.
+        if (items_contain_dir)
+        {
+            msg = g_strdup_printf("%d items selected", items_num);
+        }
+        else
+        {
+            char items_totalsize_str[ 64 ];
+            fm_file_size_to_str( items_totalsize_str, items_totalsize, use_si_prefix );
+
+            msg = g_strdup_printf("%d items selected, total size: %s", \
+                                  items_num, items_totalsize_str);
+        }
+
+    }
+    else if (items_num == 1)
     {
-        msg = NULL;
+        FmFileInfo* fi = fm_list_peek_head(files);
+        const char* size_str = fm_file_info_get_disp_size(fi);
+        if (size_str)
+        {
+            msg = g_strdup_printf("\"%s\" (%s) %s",
+                                  fm_file_info_get_disp_name(fi),
+                                  size_str ? size_str : "", fm_file_info_get_desc(fi));
+        }
+        else
+        {
+            msg = g_strdup_printf("\"%s\" %s",
+                                  fm_file_info_get_disp_name(fi),
+                                  fm_file_info_get_desc(fi));
+        }
     }
 
     page->status_text[FM_STATUS_TEXT_SELECTED_FILES] = msg;
