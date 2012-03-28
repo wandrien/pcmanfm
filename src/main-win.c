@@ -1390,9 +1390,9 @@ void on_create_new(GtkAction* action, FmMainWin* win)
     FmFolderView* fv = FM_FOLDER_VIEW(win->folder_view);
     const char* name = gtk_action_get_name(action);
 
-    if( strcmp(name, "NewFolder") == 0 )
+    if (strcmp(name, "NewFolder") == 0 || strcmp(name, "NewFolder2") == 0)
         name = TEMPL_NAME_FOLDER;
-    else if( strcmp(name, "NewBlank") == 0 )
+    else if (strcmp(name, "NewBlank") == 0)
         name = TEMPL_NAME_BLANK;
     pcmanfm_create_new(GTK_WINDOW(win), fm_folder_view_get_cwd(fv), name, filename);
 

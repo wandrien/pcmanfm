@@ -145,7 +145,8 @@ static const char main_menu_xml[] =
 "<accelerator action='Location2'/>"
 "<accelerator action='Prev2'/>"
 "<accelerator action='Next2'/>"
-"<accelerator action='Reload2'/>";
+"<accelerator action='Reload2'/>"
+"<accelerator action='NewFolder2'/>";
 
 static GtkActionEntry main_win_actions[]=
 {
@@ -199,6 +200,7 @@ static GtkActionEntry main_win_actions[]=
     {"Prev2", NULL, NULL, "XF86Back", NULL, G_CALLBACK(on_go_back)},
     {"Next2", NULL, NULL, "XF86Forward", NULL, G_CALLBACK(on_go_forward)},
     {"Reload2", NULL, NULL, "<Ctrl>R", NULL, G_CALLBACK(on_reload)},
+    {"NewFolder2", NULL, NULL, "F7", NULL, G_CALLBACK(on_create_new)},
     /* for popup menu */
     {"CreateNew", NULL, N_("Create _New..."), "", NULL, NULL},
     {"NewFolder", "folder", N_("Folder"), "<Ctrl><Shift>N", NULL, G_CALLBACK(on_create_new)},
@@ -209,7 +211,7 @@ static GtkActionEntry main_win_actions[]=
 static GtkToggleActionEntry main_win_toggle_actions[]=
 {
     {"ShowHidden", NULL, N_("Show _Hidden"), "<Ctrl>H", NULL, G_CALLBACK(on_show_hidden), FALSE},
-    {"ShowSidePane", NULL, N_("Show Side Pane"), "F7", NULL, G_CALLBACK(on_show_side_pane), TRUE}
+    {"ShowSidePane", NULL, N_("Show Side Pane"), "F9", NULL, G_CALLBACK(on_show_side_pane), TRUE}
 };
 
 static GtkRadioActionEntry main_win_mode_actions[]=
