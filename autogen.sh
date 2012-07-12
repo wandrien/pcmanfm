@@ -1,7 +1,7 @@
 #! /bin/sh
 AC_VERSION=
 
-AUTOMAKE=${AUTOMAKE:-automake}
+AUTOMAKE=${AUTOMAKE:-automake-1.11}
 AM_INSTALLED_VERSION=$($AUTOMAKE --version | sed -e '2,$ d' -e 's/.* \([0-9]*\.[0-9]*\).*/\1/')
 
 if [ "$AM_INSTALLED_VERSION" != "1.10" \
@@ -19,7 +19,7 @@ if [ "x${ACLOCAL_DIR}" != "x" ]; then
   ACLOCAL_ARG=-I ${ACLOCAL_DIR}
 fi
 
-${ACLOCAL:-aclocal$AM_VERSION} ${ACLOCAL_ARG}
+${ACLOCAL:-aclocal-1.11} ${ACLOCAL_ARG}
 ${AUTOHEADER:-autoheader$AC_VERSION} --force
 AUTOMAKE=$AUTOMAKE libtoolize -c --automake --force
 AUTOMAKE=$AUTOMAKE intltoolize -c --automake --force
